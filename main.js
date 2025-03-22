@@ -21,8 +21,8 @@ chrome.tabs.onActivated.addListener(function(tab) {
   if (targetTab === null){
     console.log(">> Check PiP For:", currentTab)
     chrome.scripting.executeScript({target: {tabId: currentTab}, files: ['./scripts/check-video.js']}, (results) => {
-      console.log("Has Video:", results[0].result);
-      if (results[0].result) targetTab = currentTab;
+      console.log("Has Video:", results?.[0].result);
+      if (results?.[0].result) targetTab = currentTab;
       else {}
     });
   }
