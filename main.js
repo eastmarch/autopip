@@ -3,11 +3,12 @@ var toggle = true;
 
 // Get settings
 chrome.storage.sync.get(['toggle'], function (result) {
-  if (typeof value === 'undefined' || value === null) {
+  const toggleSetting = result.toggle;
+  if (typeof toggleSetting === 'undefined' || toggleSetting === null) {
     toggle = true;
     chrome.storage.sync.set({ toggle: toggle });
   } else {
-    result.toggle ? (toggle = true) : (toggle = false);
+    toggleSetting ? (toggle = true) : (toggle = false);
   }
   console.log('AutoPiP Enabled:', toggle);
 });
