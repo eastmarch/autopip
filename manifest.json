@@ -1,8 +1,9 @@
 {
   "name": "AutoPiP",
   "description": "Automatically enable Picture-in-Picture",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "manifest_version": 3,
+  "key": "kjnkdhiefdmajleockonhhdfalopchmd",
   "icons": {
     "128": "assets/icon.png"
   },

@@ -1,4 +1,3 @@
-// --- [ FUNCTION: Get video ] --- //
 function getVideos() {
   const videos = Array.from(document.querySelectorAll('video'))
     .filter((video) => video.readyState != 0)
@@ -10,23 +9,31 @@ function getVideos() {
       return v2Rect.width * v2Rect.height - v1Rect.width * v1Rect.height;
     });
 
-  if (videos.length === 0) {
-    console.log('No playing video found');
-    return null;
-  }
+  if (videos.length === 0) return null;
   return videos[0];
 }
 
-// --- [ EXECUTE ] --- //
 async function execute() {
+  // Build response
+  let response = {
+    video: {
+      source: null,
+      page: null,
+    },
+    error: null,
+  };
+
   // Get video
   const video = getVideos();
-  if (!video) return { video: null, setActionHandlerError: null };
+  if (!video) return null;
+  response.video.source = video.currentSrc;
+  response.video.page = video.baseURI;
 
   // Request automatic PiP
   // https://developer.chrome.com/blog/automatic-picture-in-picture-media-playback
   try {
     console.log('Playing video was found');
+    video.setAttribute('__pip__', true);
     // Request video to automatically enter picture-in-picture when eligible
     navigator.mediaSession.setActionHandler(
       'enterpictureinpicture',
@@ -34,11 +41,11 @@ async function execute() {
         await video.requestPictureInPicture();
       }
     );
-    return { video: video.baseURI, setActionHandlerError: null };
   } catch (err) {
     console.log('The enterpictureinpicture action is not yet supported');
-    return { video: video.baseURI, setActionHandlerError: err };
+    response.error = err;
   }
+  return response;
 }
 
 execute();

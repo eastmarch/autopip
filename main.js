@@ -1,9 +1,7 @@
 var log = [];
 var toggle = true;
-var currentTab = null;
-var prevTab = null;
 
-// Get Settings
+// Get settings
 chrome.storage.sync.get(['toggle'], function (result) {
   if (typeof value === 'undefined' || value === null) {
     toggle = true;
@@ -14,29 +12,23 @@ chrome.storage.sync.get(['toggle'], function (result) {
   console.log('AutoPiP Enabled:', toggle);
 });
 
-chrome.tabs.onActivated.addListener(function (tab) {
-  // --- [0] : Check settings  --- //
+// Set audible media listener
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (!toggle) {
     console.log('[EXT_DISABLED] Extension is disabled in the settings');
     return;
   }
 
-  // --- [1] : Check tab  --- //
-  // console.clear();
-  currentTab = tab.tabId;
-  console.log(`Previous tab: ${prevTab}`);
-  console.log(`Current tab: ${currentTab}`);
-
-  // --- [2] : Request enterpictureinpicture on previous tab  --- //
-  if (prevTab != null) {
-    console.log(`Checking for playing video on previous tab`);
+  const audibleMedia = changeInfo.audible;
+  if (audibleMedia) {
+    console.log(`Audible media detetcted on tab: ${tabId}`);
     chrome.scripting.executeScript(
-      { target: { tabId: prevTab }, files: ['./scripts/auto-pip.js'] },
+      { target: { tabId: tabId }, files: ['./scripts/auto-pip.js'] },
       (res) => {
         console.log('PiP:', res);
       }
     );
+  } else {
+    console.log(`Media paused on tab: ${tabId}`);
   }
-
-  prevTab = currentTab;
 });
